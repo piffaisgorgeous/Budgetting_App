@@ -1,17 +1,18 @@
-class Category {
+class Item {
   int id;
   String name;
   double amount;
-  double maximum;
+  String date;
+  int catId;
 
-  categoryMap() {
+  itemMap() {
     var mapping = Map<String, dynamic>();
     mapping['id'] = id;
     mapping['name'] = name;
     mapping['amount'] = amount;
-    mapping['maximum'] = maximum;
+    mapping['date'] = date;
+    mapping['catId'] = catId;
 
-    print(mapping['amount']);
     return mapping;
   }
 }

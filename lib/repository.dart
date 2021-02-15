@@ -1,6 +1,5 @@
 import 'package:app_budget/database.dart';
 import 'package:sqflite/sqflite.dart';
-import 'dart:developer';
 
 class Repository {
   DatabaseConnection _databaseConnection;
@@ -63,8 +62,6 @@ class Repository {
     // Moment rawDate = Moment.parse(pickdate);
     var connection = await database;
     var data = await connection.rawQuery('SELECT * FROM $table ');
-    // log("pick"+pickdate.toString());
-    log("data" + data.toString());
     return data;
   }
 

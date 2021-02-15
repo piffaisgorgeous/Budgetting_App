@@ -11,7 +11,6 @@ class Category {
     mapping['amount'] = amount;
     mapping['maximum'] = maximum;
 
-    print(mapping['amount']);
     return mapping;
   }
 }

@@ -7,8 +7,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import 'dart:developer';
-
 String ddate;
 
 class ItemDetail extends StatefulWidget {
@@ -16,7 +14,6 @@ class ItemDetail extends StatefulWidget {
   final double maximum;
   final double amount;
   final String name;
-  //final String dateChosen;
 
   ItemDetail(this.id, this.maximum, this.amount, this.name);
 
@@ -83,30 +80,54 @@ class _ItemDetailState extends State<ItemDetail> {
           return AlertDialog(
             actions: <Widget>[
               FlatButton(
+                  color: Colors.lightBlue[100],
                   onPressed: () async {
-                    _item.id = itm[0]['id'];
-                    _item.name = editNameController.text;
-                    _item.amount = double.parse(editAmountController.text);
-                    _item.date = itm[0]['date'];
-                    _item.catId = widget.id;
-                    var result = await _categoryService.updateItem(_item);
-                    print(result);
-                    Navigator.pop(context);
-                    getAllItems();
-
-                    computeTotalItems();
+                    if (double.parse(editAmountController.text) <=
+                            widget.maximum &&
+                        widget.amount <= widget.maximum) {
+                      _item.id = itm[0]['id'];
+                      _item.name = editNameController.text;
+                      _item.amount = double.parse(editAmountController.text);
+                      _item.date = itm[0]['date'];
+                      _item.catId = widget.id;
+                      var result = await _categoryService.updateItem(_item);
+                      Navigator.pop(context);
+                      getAllItems();
+                      computeTotalItems();
+                    } else {
+                      Navigator.pop(context);
+                      showDialog(
+                          context: context,
+                          barrierDismissible: true,
+                          builder: (param) {
+                            return AlertDialog(
+                              actions: <Widget>[
+                                FlatButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: Text('Okay'),
+                                    color: Colors.red)
+                              ],
+                              title: Text('lapas nakas budget dzai'),
+                            );
+                          });
+                    }
                   },
-                  child: Text('Update'))
+                  child: Text(
+                    'Update',
+                    style: TextStyle(color: Colors.black),
+                  ))
             ],
             title: Text('Update Item'),
             content: SingleChildScrollView(
                 child: Column(children: <Widget>[
               TextField(
                   controller: editNameController,
-                  decoration: InputDecoration(labelText: 'Name of Item')),
+                  decoration: InputDecoration(labelText: 'Name of Item'),
+                  style: TextStyle(fontWeight: FontWeight.bold)),
               TextField(
                 controller: editAmountController,
                 decoration: InputDecoration(labelText: 'Maximum Amount'),
+                style: TextStyle(fontWeight: FontWeight.bold),
               )
             ])),
           );
@@ -122,40 +143,71 @@ class _ItemDetailState extends State<ItemDetail> {
           return AlertDialog(
             actions: <Widget>[
               FlatButton(
-                onPressed: () async {
-                  _item.name = nameController.text;
-                  _item.amount = double.parse(amountController.text);
-                  _item.catId = widget.id;
-                  _item.date = ddate;
-                  var result = await _categoryService.saveItem(_item);
-                  print(result);
-                  computeTotalItems();
-                  setState(() {});
-                  Navigator.pop(context);
-                  getAllItems();
-                },
-                child: Text('Add'),
-                color: Colors.green,
-              ),
+                  onPressed: () async {
+                    if (double.parse(amountController.text) <= widget.maximum &&
+                        widget.amount <= widget.maximum) {
+                      _item.name = nameController.text;
+                      _item.amount = double.parse(amountController.text);
+                      _item.catId = widget.id;
+                      _item.date = ddate;
+                      var result = await _categoryService.saveItem(_item);
+                      computeTotalItems();
+                      setState(() {});
+                      Navigator.pop(context);
+                      getAllItems();
+                    } else {
+                      Navigator.pop(context);
+                      showDialog(
+                          context: context,
+                          barrierDismissible: true,
+                          builder: (param) {
+                            return AlertDialog(
+                              actions: <Widget>[
+                                FlatButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: Text(
+                                      'Okay',
+                                      style: TextStyle(color: Colors.black),
+                                    ),
+                                    color: Colors.red[200])
+                              ],
+                              title: Text('lapas nakas budget dzai'),
+                            );
+                          });
+                    }
+                  },
+                  child: Text(
+                    'Add',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                  color: Colors.lightBlue[100]),
               FlatButton(
                 onPressed: () async {
                   Navigator.pop(context);
                 },
-                child: Text('Cancel'),
+                child: Text(
+                  'Cancel',
+                  style: TextStyle(color: Colors.white),
+                ),
                 color: Colors.red,
               ),
             ],
-            title: Text('Add Items'),
+            title: Text(
+              'Add Items',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             content: SingleChildScrollView(
                 child: Column(
               children: <Widget>[
                 TextField(
                   controller: nameController,
                   decoration: InputDecoration(hintText: 'Name of Item'),
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 TextField(
                   controller: amountController,
                   decoration: InputDecoration(hintText: 'Enter Amount'),
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 DatePicker(),
               ],
@@ -176,8 +228,11 @@ class _ItemDetailState extends State<ItemDetail> {
                     Navigator.pop(context);
                     getAllItems();
                   },
-                  child: Text('Cancel'),
-                  color: Colors.green),
+                  child: Text(
+                    'Cancel',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                  color: Colors.lightBlue[100]),
               FlatButton(
                   onPressed: () async {
                     var result = await _categoryService.deleteItem(itemId);
@@ -186,6 +241,7 @@ class _ItemDetailState extends State<ItemDetail> {
                       computeTotalItems();
                       Home();
                     });
+
                     Navigator.pop(context);
                   },
                   child: Text('Delete'),
@@ -199,16 +255,22 @@ class _ItemDetailState extends State<ItemDetail> {
   computeTotalItems() async {
     var total = 0.0;
     var items = await categoryService().readItemWithId(widget.id);
-    items.forEach(
-      (item) {
-        setState(() {
-          total += item['amount'];
-        });
-        totalItem = total;
-        log("total item" + totalItem.toString());
+    if (items.length != 0) {
+      items.forEach(
+        (item) {
+          setState(() {
+            total += item['amount'];
+          });
+          totalItem = total;
+          updateAmountCategory(totalItem);
+        },
+      );
+    } else {
+      setState(() {
+        totalItem = 0.0;
         updateAmountCategory(totalItem);
-      },
-    );
+      });
+    }
   }
 
   updateAmountCategory(double totalItem) async {
@@ -229,7 +291,7 @@ class _ItemDetailState extends State<ItemDetail> {
         child: Scaffold(
       appBar: AppBar(
         leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: Icon(Icons.home),
             onPressed: () {
               Home();
               Navigator.push(
@@ -243,48 +305,71 @@ class _ItemDetailState extends State<ItemDetail> {
                 _showFormDialog(context);
               })
         ],
+        backgroundColor: Colors.lightBlue,
       ),
-      body: Column(
-        children: <Widget>[
-          Container(
-            child: forBarE == null && forBarM == null
-                ? MyHomePage(widget.amount, widget.maximum)
-                : MyHomePage(forBarE, forBarM),
-          ),
-          Expanded(
-              child: ListView.builder(
-            itemCount: _itemList.length,
-            itemBuilder: (BuildContext context, int index) {
-              log("itemlist" + _itemList.length.toString());
-              return Card(
-                  child: ListTile(
-                leading: IconButton(
-                    icon: Icon(Icons.edit),
-                    onPressed: () {
-                      editItem(context, _itemList[index].deyt_id);
-                    }),
-                title: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text(_itemList[index].deyt_name),
-                          Text('${_itemList[index].deyt_amount}')
-                        ],
+      body: Container(
+        decoration: BoxDecoration(
+            gradient: LinearGradient(
+                begin: Alignment.topRight,
+                end: Alignment.bottomRight,
+                colors: [
+              Colors.grey[200],
+              Colors.pink[200],
+            ])),
+        child: Column(
+          children: <Widget>[
+            Container(
+              child: forBarE == null && forBarM == null
+                  ? MyHomePage(widget.amount, widget.maximum)
+                  : MyHomePage(forBarE, forBarM),
+            ),
+            Expanded(
+                child: ListView.builder(
+              itemCount: _itemList.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Card(
+                    child: ListTile(
+                  leading: IconButton(
+                      icon: Icon(
+                        Icons.edit,
+                        color: Colors.grey,
                       ),
-                    ]),
-                subtitle: Text('${_itemList[index].deyt_date}'),
-                trailing: IconButton(
-                  icon: Icon(Icons.delete),
-                  onPressed: () {
-                    _deleteFormDialog(context, _itemList[index].deyt_id);
-                  },
-                ),
-              ));
-            },
-          )),
-        ],
+                      onPressed: () {
+                        editItem(context, _itemList[index].deyt_id);
+                      }),
+                  title: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text(
+                              _itemList[index].deyt_name,
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              '${_itemList[index].deyt_amount}',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            )
+                          ],
+                        ),
+                      ]),
+                  subtitle:
+                      Text(DateFormat.yMd().format(_itemList[index].deyt_date)),
+                  trailing: IconButton(
+                    icon: Icon(
+                      Icons.delete,
+                      color: Colors.red,
+                    ),
+                    onPressed: () {
+                      _deleteFormDialog(context, _itemList[index].deyt_id);
+                    },
+                  ),
+                ));
+              },
+            )),
+          ],
+        ),
       ),
     ));
   }
@@ -303,23 +388,32 @@ class _DatePickerState extends State<DatePicker> {
   Widget build(BuildContext context) {
     return Row(children: <Widget>[
       Expanded(
-        child: Text(dateone == null ? 'No Chosen Date' : dateone),
+        child: Text(
+          dateone == null ? 'No Chosen Date' : dateone,
+          style: TextStyle(fontSize: 14),
+        ),
       ),
-      RaisedButton(
-          child: Text('Choose Date'),
-          onPressed: () {
-            showDatePicker(
-                    context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime(2020),
-                    lastDate: DateTime(2025))
-                .then((date) {
-              setState(() {
-                dateone = formatter.format(date);
-                ddate = date.toString();
+      SizedBox(
+        width: 110,
+        child: RaisedButton(
+            child: Text(
+              'Choose Date',
+              style: TextStyle(fontSize: 12),
+            ),
+            onPressed: () {
+              showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(2020),
+                      lastDate: DateTime(2025))
+                  .then((date) {
+                setState(() {
+                  dateone = formatter.format(date);
+                  ddate = date.toString();
+                });
               });
-            });
-          }),
+            }),
+      ),
     ]);
   }
 }

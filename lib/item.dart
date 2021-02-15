@@ -12,7 +12,6 @@ class Item {
     mapping['amount'] = amount;
     mapping['date'] = date;
     mapping['catId'] = catId;
-
     return mapping;
   }
 }

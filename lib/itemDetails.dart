@@ -90,7 +90,7 @@ class _ItemDetailState extends State<ItemDetail> {
                       _item.amount = double.parse(editAmountController.text);
                       _item.date = itm[0]['date'];
                       _item.catId = widget.id;
-                      var result = await _categoryService.updateItem(_item);
+                      await _categoryService.updateItem(_item);
                       Navigator.pop(context);
                       getAllItems();
                       computeTotalItems();

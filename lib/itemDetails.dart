@@ -46,7 +46,6 @@ class _ItemDetailState extends State<ItemDetail> {
 
   getAllItems() async {
     _itemList = List<Deyt>();
-    var total = 0.0;
     var items = await categoryService().readItemWithId(widget.id);
     items.forEach((item) {
       setState(() {

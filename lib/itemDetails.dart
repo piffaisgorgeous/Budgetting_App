@@ -277,7 +277,7 @@ class _ItemDetailState extends State<ItemDetail> {
     forAmount.id = widget.id;
     forAmount.maximum = widget.maximum;
     forAmount.name = widget.name;
-    var items = await _categoryService.updateAmountCategory(forAmount);
+    await _categoryService.updateAmountCategory(forAmount);
     setState(() {
       forBarE = totalItem;
       forBarM = widget.maximum;

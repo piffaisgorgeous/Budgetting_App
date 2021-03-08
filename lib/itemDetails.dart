@@ -46,7 +46,6 @@ class _ItemDetailState extends State<ItemDetail> {
 
   getAllItems() async {
     _itemList = List<Deyt>();
-    var total = 0.0;
     var items = await categoryService().readItemWithId(widget.id);
     items.forEach((item) {
       setState(() {
@@ -90,7 +89,7 @@ class _ItemDetailState extends State<ItemDetail> {
                       _item.amount = double.parse(editAmountController.text);
                       _item.date = itm[0]['date'];
                       _item.catId = widget.id;
-                      var result = await _categoryService.updateItem(_item);
+                      await _categoryService.updateItem(_item);
                       Navigator.pop(context);
                       getAllItems();
                       computeTotalItems();

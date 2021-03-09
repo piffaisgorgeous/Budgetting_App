@@ -134,7 +134,6 @@ class _ItemDetailState extends State<ItemDetail> {
   }
 
   _showFormDialog(BuildContext context) {
-    DateTime dateone;
     return showDialog(
         context: context,
         barrierDismissible: true,
@@ -143,17 +142,47 @@ class _ItemDetailState extends State<ItemDetail> {
             actions: <Widget>[
               FlatButton(
                   onPressed: () async {
-                    if (double.parse(amountController.text) <= widget.maximum &&
-                        widget.amount <= widget.maximum) {
-                      _item.name = nameController.text;
-                      _item.amount = double.parse(amountController.text);
-                      _item.catId = widget.id;
-                      _item.date = ddate;
-                      var result = await _categoryService.saveItem(_item);
-                      computeTotalItems();
-                      setState(() {});
-                      Navigator.pop(context);
-                      getAllItems();
+                    if (nameController.text != '' &&
+                        amountController.text != '' &&
+                        ddate != '') {
+                      if (double.parse(amountController.text) <=
+                              widget.maximum &&
+                          widget.amount <= widget.maximum) {
+                        _item.name = nameController.text;
+                        _item.amount = double.parse(amountController.text);
+                        _item.catId = widget.id;
+                        _item.date = ddate;
+                        await _categoryService.saveItem(_item);
+                        computeTotalItems();
+                        setState(() {});
+                        Navigator.pop(context);
+                        getAllItems();
+
+                        ddate='';
+                        nameController.text='';
+                        amountController.text='';
+
+                      } else {
+                        Navigator.pop(context);
+                        showDialog(
+                            context: context,
+                            barrierDismissible: true,
+                            builder: (param) {
+                              return AlertDialog(
+                                actions: <Widget>[
+                                  FlatButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: Text(
+                                        'Okay',
+                                        style: TextStyle(color: Colors.black),
+                                      ),
+                                      color: Colors.red[200])
+                                ],
+                                title: Text('lapas nakas budget dzai'),
+                              );
+                            });
+                        amountController.text='';
+                      }
                     } else {
                       Navigator.pop(context);
                       showDialog(
@@ -170,9 +199,13 @@ class _ItemDetailState extends State<ItemDetail> {
                                     ),
                                     color: Colors.red[200])
                               ],
-                              title: Text('lapas nakas budget dzai'),
+                              title: Text('empty ang uban fields si pwede'),
                             );
                           });
+
+                        ddate='';
+                        nameController.text='';
+                        amountController.text='';
                     }
                   },
                   child: Text(
@@ -234,7 +267,7 @@ class _ItemDetailState extends State<ItemDetail> {
                   color: Colors.lightBlue[100]),
               FlatButton(
                   onPressed: () async {
-                    var result = await _categoryService.deleteItem(itemId);
+                    await _categoryService.deleteItem(itemId);
                     setState(() {
                       getAllItems();
                       computeTotalItems();

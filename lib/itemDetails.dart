@@ -127,6 +127,7 @@ class _ItemDetailState extends State<ItemDetail> {
                 controller: editAmountController,
                 decoration: InputDecoration(labelText: 'Maximum Amount'),
                 style: TextStyle(fontWeight: FontWeight.bold),
+                keyboardType: TextInputType.number,
               )
             ])),
           );
@@ -240,6 +241,7 @@ class _ItemDetailState extends State<ItemDetail> {
                   controller: amountController,
                   decoration: InputDecoration(hintText: 'Enter Amount'),
                   style: TextStyle(fontWeight: FontWeight.bold),
+                  keyboardType: TextInputType.number,
                 ),
                 DatePicker(),
               ],

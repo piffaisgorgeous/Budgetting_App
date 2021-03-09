@@ -62,15 +62,39 @@ class _HomeState extends State<Home> {
         barrierDismissible: true,
         builder: (param) {
           return AlertDialog(
-            actions: <Widget>[
+            actions: [
               FlatButton(
                 onPressed: () async {
-                  _category.name = nameController.text;
-                  _category.maximum = double.parse(maxController.text);
-                  _category.amount = 0.0;
-                  var result = await _categoryService.saveCategory(_category);
-                  Navigator.pop(context);
-                  getAllCategories();
+                  if (nameController.text == '' && maxController.text == '') {
+                    Navigator.pop(context);
+                    showDialog(
+                        context: context,
+                        barrierDismissible: true,
+                        builder: (param) {
+                          return AlertDialog(
+                            actions: <Widget>[
+                              FlatButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: Text(
+                                    'Okay',
+                                    style: TextStyle(color: Colors.black),
+                                  ),
+                                  color: Colors.red[200])
+                            ],
+                            title: Text('empty ang uban fields si pwede'),
+                          );
+                        });
+
+                    nameController.text = '';
+                    maxController.text = '';
+                  } else {
+                    _category.name = nameController.text;
+                    _category.maximum = double.parse(maxController.text);
+                    _category.amount = 0.0;
+                    var result = await _categoryService.saveCategory(_category);
+                    Navigator.pop(context);
+                    getAllCategories();
+                  }
                 },
                 child: Text(
                   'Save',

@@ -97,6 +97,7 @@ class _HomeState extends State<Home> {
                   controller: maxController,
                   decoration: InputDecoration(hintText: 'Maximum Amount'),
                   style: TextStyle(fontWeight: FontWeight.bold),
+                  keyboardType: TextInputType.number,
                 )
               ],
             )),

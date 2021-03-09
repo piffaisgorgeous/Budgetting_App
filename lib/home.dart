@@ -91,7 +91,7 @@ class _HomeState extends State<Home> {
                     _category.name = nameController.text;
                     _category.maximum = double.parse(maxController.text);
                     _category.amount = 0.0;
-                    var result = await _categoryService.saveCategory(_category);
+                    await _categoryService.saveCategory(_category);
                     Navigator.pop(context);
                     getAllCategories();
                   }
@@ -143,8 +143,7 @@ class _HomeState extends State<Home> {
                     _category.name = editNameController.text;
                     _category.amount = cat[0]['amount'];
                     _category.maximum = double.parse(editMaxController.text);
-                    var result =
-                        await _categoryService.updateCategory(_category);
+                    await _categoryService.updateCategory(_category);
                     Navigator.pop(context);
                     getAllCategories();
                   },
@@ -194,9 +193,8 @@ class _HomeState extends State<Home> {
                   color: Colors.lightBlue[100]),
               FlatButton(
                   onPressed: () async {
-                    var result = await _categoryService.deleteCategory(catId);
-                    var resultone =
-                        await _categoryService.deleteItemHome(catId);
+                    await _categoryService.deleteCategory(catId);
+                    await _categoryService.deleteItemHome(catId);
                     setState(() {
                       getAllCategories();
                       Navigator.pop(context);
@@ -214,8 +212,7 @@ class _HomeState extends State<Home> {
   }
 
   getAllItems() async {
-    _itemList = List<Deyt>();
-    var total = 0.0;
+    _itemList = List<Deyt>(); 
     var items = await categoryService().readItemWithDate();
     items.forEach((item) {
       setState(() {

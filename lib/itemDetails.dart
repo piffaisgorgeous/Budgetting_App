@@ -146,9 +146,7 @@ class _ItemDetailState extends State<ItemDetail> {
                     if (nameController.text != '' &&
                         amountController.text != '' &&
                         ddate != '') {
-                      if (double.parse(amountController.text) <=
-                              widget.maximum &&
-                          widget.amount <= widget.maximum) {
+                      if (double.parse(amountController.text) <= widget.maximum) {
                         _item.name = nameController.text;
                         _item.amount = double.parse(amountController.text);
                         _item.catId = widget.id;

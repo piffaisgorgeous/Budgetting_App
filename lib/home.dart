@@ -279,7 +279,9 @@ class _HomeState extends State<Home> {
                                 pickdate == null
                                     ? "'No Date Selected'"
                                     : 'Picked Date: ' +
-                                        DateFormat.yMd().format(pickdate),
+                                    DateFormat.yMd().format(pickdate.subtract(Duration(days: 7)))+
+                                    "-"+
+                                     DateFormat.yMd().format(pickdate),
                                 style: TextStyle(
                                     fontSize: 15, fontWeight: FontWeight.bold),
                               ),
